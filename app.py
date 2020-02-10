@@ -1,16 +1,16 @@
 from flask import Flask, render_template, url_for, request, redirect
 import psycopg2
-import config
+import config       # Config file locally containing the local password, soon to be deprecated
+import subprocess   # For heroku postgres connection
 
 app = Flask(__name__)
 
-# PostgreSQL and psycopg2 server
-con = psycopg2.connect(dbname='cntUserForm',
-                       user='postgres',
-                       host='localhost',
-                       port='5432',
-                       password=config.Config.SERVER_PASSWORD)
+# PostgreSQL connection query
+proc = subprocess.Popen('heroku config:get DATABASE_URL -a cnt-user-form', stdout=subprocess.PIPE, shell=True)
+db_url = proc.stdout.read().decode('utf-8').strip() + '?sslmode=require'
 
+# PostgreSQL and psycopg2 server
+con = psycopg2.connect(db_url)
 # Cursor object to execute SQL statements
 cur = con.cursor()
 
