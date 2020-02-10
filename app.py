@@ -6,7 +6,8 @@ app = Flask(__name__)
 
 # PostgreSQL connection query
 proc = subprocess.Popen('heroku config:get DATABASE_URL -a cnt-user-form', stdout=subprocess.PIPE, shell=True)
-db_url = proc.stdout.read().decode('utf-8').strip() + '?sslmode=require'
+# db_url = proc.stdout.read().decode('utf-8').strip() + '?sslmode=require'
+db_url = proc.stdout.read().decode('utf-8').strip()
 
 # PostgreSQL and psycopg2 server
 con = psycopg2.connect(db_url)
