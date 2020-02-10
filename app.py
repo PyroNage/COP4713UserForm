@@ -15,7 +15,6 @@ con = psycopg2.connect(dbname='cntUserForm',
 cur = con.cursor()
 
 
-
 @app.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
@@ -25,32 +24,42 @@ def index():
             int(request.form['age']))
 
         try:
-            cur.execute(insert_table_query)             # Execute the query to insert user to table
-            con.commit()                                #
+            cur.execute(insert_table_query)  # Execute the query to insert user to table
+            con.commit()  #
             return redirect('/')
         except:
             return 'There was an issue adding your user.'
 
 
     else:
-        cur.execute("SELECT * FROM userTable")          # Select all the items from the database to populate table
-        items = cur.fetchall()                          # Fetch all users and store them in a variable called items
+        cur.execute("SELECT * FROM userTable")  # Select all the items from the database to populate table
+        items = cur.fetchall()  # Fetch all users and store them in a variable called items
         return render_template('index.html', users=items)
 
 
 @app.route('/delete/<string:email>')
 def delete(email):
-
     # Generating query that we will use to delete a user from the database
     delete_table_query = "DELETE FROM %s WHERE email = '%s';" % (
         "userTable", email)
 
     try:
-        cur.execute(delete_table_query)                 # Execute the query to delete the table entry
-        con.commit()                                    # Commit changes to database
-        return redirect('/')                            # Refresh the page
+        cur.execute(delete_table_query)  # Execute the query to delete the table entry
+        con.commit()  # Commit changes to database
+        return redirect('/')  # Refresh the page
     except:
         return 'There was a problem deleting that user.'
+
+
+@app.route('/createTable')
+def create():
+    create_table_query = "CREATE TABLE userTable (email TEXT PRIMARY KEY, firstName TEXT NOT NULL, lastName TEXT NOT NULL, age INTEGER NOT NULL) ;"
+    try:
+        cur.execute(create_table_query)  # Execute the query to create table in database
+        con.commit()  # commit changes
+        return redirect('/')
+    except:
+        return 'there was an error creating the table.'
 
 
 if __name__ == '__main__':
