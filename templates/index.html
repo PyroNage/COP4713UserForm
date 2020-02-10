@@ -14,16 +14,14 @@
             <th>Last Name</th>
             <th>Email</th>
             <th>Age</th>
-            <th>Created</th>
             <th>Actions</th>
         </tr>
         {% for user in users %}
             <tr>
-                <td>{{ user.firstName }}</td>
-                <td>{{ user.lastName }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.age }}</td>
-                <td>{{ user.date_created.date() }}</td>
+                <td>{{ user[1] }}</td>
+                <td>{{ user[2] }}</td>
+                <td>{{ user[0] }}</td>
+                <td>{{ user[3] }}</td>
                 <td>
                     <a href="/delete/{{ user.email }}">Delete</a>
                     <!--

@@ -1,10 +1,28 @@
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import psycopg2
 
 app = Flask(__name__)
+
+# SQLAlchemy database setup
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
+
+# PostgreSQL and psycopg2 server
+con = psycopg2.connect(dbname='cntUserForm',
+                       user='postgres',
+                       host='localhost',
+                       port='5432',
+                       password='Postgres011235813')
+
+# Cursor object to execute SQL statements
+cur = con.cursor()
+
+# cur.execute(create_Table)
+# cur.execute(insert_Table)
+
+con.commit()
 
 
 class User(db.Model):
@@ -21,23 +39,32 @@ class User(db.Model):
 @app.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
-        user_firstName = request.form['firstName']
-        user_lastName = request.form['lastName']
-        user_email = request.form['email']
-        user_age = request.form['age']
-        new_user = User(firstName=user_firstName, lastName=user_lastName, email=user_email, age=user_age)
+        print(request.form['email'], request.form['firstName'], request.form['lastName'], request.form['age'])
+
+        print(type(request.form['age']))
+
+        insert_table_query = '''INSERT INTO userTable (EMAIL, FIRSTNAME, LASTNAME, AGE)
+        VALUES (request.form['email'], request.form['firstName'], request.form['lastName'], request.form['age']);'''
+
+        insert_table_query2 = "INSERT INTO %s (email, firstName, lastName, age) VALUES ('%s', '%s', '%s', '%s');" % (
+        "userTable", request.form['email'], request.form['firstName'], request.form['lastName'],
+        int(request.form['age']))
+
+        print(insert_table_query2)
 
         try:
-            db.session.add(new_user)
-            db.session.commit()
+            cur.execute(insert_table_query2)
+            con.commit()
             return redirect('/')
         except:
             return 'There was an issue adding your user.'
 
 
     else:
-        users = User.query.order_by(User.date_created).all()
-        return render_template('index.html', users=users)
+        cur.execute("SELECT * FROM userTable")
+        items = cur.fetchall()
+        print("Items from database: ", items)
+        return render_template('index.html', users=items)
 
 
 @app.route('/delete/<string:email>')
