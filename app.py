@@ -1,6 +1,5 @@
 from flask import Flask, render_template, url_for, request, redirect
 import psycopg2
-import config       # Config file locally containing the local password, soon to be deprecated
 import subprocess   # For heroku postgres connection
 
 app = Flask(__name__)
