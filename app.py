@@ -27,7 +27,7 @@ con = psycopg2.connect(
             )
 
 # PostgreSQL and psycopg2 server
-con = psycopg2.connect(db_url)
+# con = psycopg2.connect(db_url)
 # Cursor object to execute SQL statements
 cur = con.cursor()
 
