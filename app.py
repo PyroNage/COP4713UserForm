@@ -5,9 +5,26 @@ import subprocess   # For heroku postgres connection
 app = Flask(__name__)
 
 # PostgreSQL connection query
-proc = subprocess.Popen('heroku config:get DATABASE_URL -a cnt-user-form', stdout=subprocess.PIPE, shell=True)
+# proc = subprocess.Popen('heroku config:get DATABASE_URL -a cnt-user-form', stdout=subprocess.PIPE, shell=True)
 # db_url = proc.stdout.read().decode('utf-8').strip() + '?sslmode=require'
-db_url = proc.stdout.read().decode('utf-8').strip()
+
+import urllib.parse as urlparse
+import os
+
+url = urlparse.urlparse(os.environ['DATABASE_URL'])
+dbname = url.path[1:]
+user = url.username
+password = url.password
+host = url.hostname
+port = url.port
+
+con = psycopg2.connect(
+            dbname=dbname,
+            user=user,
+            password=password,
+            host=host,
+            port=port
+            )
 
 # PostgreSQL and psycopg2 server
 con = psycopg2.connect(db_url)
